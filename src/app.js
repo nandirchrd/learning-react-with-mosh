@@ -6,7 +6,6 @@ class App extends Component {
 	state = {
 		counters: null,
 	};
-
 	componentDidMount() {
 		const counters = [
 			{ id: 1, value: 0 },
@@ -19,9 +18,8 @@ class App extends Component {
 		this.setState({ ...this.state, counters });
 	}
 	handleDecrement = (target) => {
-		if (target.value === 0) {
-			return;
-		}
+		if (target.value === 0) return;
+
 		const newCounter = this.state.counters;
 		const index = this.state.counters.findIndex(
 			(counter) => counter === target
@@ -41,7 +39,6 @@ class App extends Component {
 		const filteredCounter = this.state.counters.filter(
 			(counter) => counter !== target
 		);
-
 		this.setState({ ...this.state, counters: filteredCounter });
 	};
 	getCounts = () => {
