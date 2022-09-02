@@ -6,8 +6,20 @@ class Movies extends Component {
 	state = {
 		movies: null,
 	};
+
+	componentDidUpdate() {
+		console.log('COMP - Did update');
+	}
+	componentWillUnmount() {
+		console.log('COMP - WILL UNMOUNT?');
+	}
 	componentDidMount() {
+		console.log('COMP - Did mount');
 		this.setState({ ...this.state, movies: getMovies() });
+	}
+	shouldComponentUpdate() {
+		console.log('COMP - Should Update?');
+		return true;
 	}
 	handleDeleteMovie = (targetMovie) => {
 		const deletedMovie = this.state.movies.filter(
@@ -15,6 +27,14 @@ class Movies extends Component {
 		);
 		this.setState({ ...this.state, movies: deletedMovie });
 		alert(`"${targetMovie.title}" has deleted`);
+	};
+	handleLikedMovie = (targetMovie) => {
+		const newMovies = [...this.state.movies];
+		const index = this.state.movies.findIndex(
+			(movie) => movie === targetMovie
+		);
+		newMovies[index].liked = !newMovies[index].liked;
+		this.setState({ ...this.state, movies: newMovies });
 	};
 	showMovies() {
 		const { movies } = this.state;
@@ -35,7 +55,7 @@ class Movies extends Component {
 							<th>Genre</th>
 							<th>Stock</th>
 							<th>Rate</th>
-							<th></th>
+							<th colSpan={2}></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -44,6 +64,7 @@ class Movies extends Component {
 								key={movie._id}
 								movie={movie}
 								onDelete={this.handleDeleteMovie}
+								onLiked={this.handleLikedMovie}
 							/>
 						))}
 					</tbody>
@@ -51,7 +72,9 @@ class Movies extends Component {
 			</>
 		);
 	}
+
 	render() {
+		console.log('COMP - Rendered');
 		return this.showMovies();
 	}
 }

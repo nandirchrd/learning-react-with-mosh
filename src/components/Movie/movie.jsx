@@ -1,15 +1,20 @@
 import { Component } from 'react';
+import Like from '../common/like';
 
 class Movie extends Component {
 	constructor(props) {
 		super();
 	}
-	handleDelete(movie) {
+	onDelete(movie) {
 		const { onDelete } = this.props;
 
 		if (window.confirm('Are u sure?')) {
 			onDelete(movie);
 		}
+	}
+	onLiked(movie) {
+		const { onLiked } = this.props;
+		onLiked(movie);
 	}
 	render() {
 		const { movie } = this.props;
@@ -19,16 +24,17 @@ class Movie extends Component {
 				<td>{movie.genre.name}</td>
 				<td>{movie.numberInStock}</td>
 				<td>{movie.dailyRentalRate}</td>
-				<td className='d-flex gap-2'>
+				<td>
+					<Like
+						onClick={() => this.onLiked(movie)}
+						liked={movie.liked}
+					/>
+				</td>
+				<td className='text-center'>
 					<button
-						className='btn btn-sm btn-danger'
-						onClick={() => this.handleDelete(movie)}>
+						className='btn btn-sm btn-danger mx-2'
+						onClick={() => this.onDelete(movie)}>
 						Delete
-					</button>
-					<button
-						className='btn btn-sm btn-success'
-						onClick={() => this.handleDelete(movie)}>
-						Change
 					</button>
 				</td>
 			</tr>
