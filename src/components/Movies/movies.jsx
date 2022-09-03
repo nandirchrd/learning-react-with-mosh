@@ -1,10 +1,14 @@
 import { Component } from 'react';
 import { getMovies } from '../../services/fakeMovieService';
 import { Movie } from '../';
+import Pagination from '../Pagination/pagination';
+import paginate from '../../utils/paginate';
 
 class Movies extends Component {
 	state = {
 		movies: null,
+		currentPage: 1,
+		pageSize: 4,
 	};
 
 	componentDidUpdate() {
@@ -25,7 +29,19 @@ class Movies extends Component {
 		const deletedMovie = this.state.movies.filter(
 			(movie) => movie !== targetMovie
 		);
-		this.setState({ ...this.state, movies: deletedMovie });
+
+		this.setState({ ...this.state, movies: deletedMovie }, () => {
+			const pageCount = Math.ceil(
+				this.state.movies.length / this.state.pageSize
+			);
+			if (this.state.currentPage > pageCount) {
+				this.setState({
+					...this.state,
+					currentPage: this.state.currentPage - 1,
+				});
+			}
+		});
+
 		alert(`"${targetMovie.title}" has deleted`);
 	};
 	handleLikedMovie = (targetMovie) => {
@@ -36,8 +52,21 @@ class Movies extends Component {
 		newMovies[index].liked = !newMovies[index].liked;
 		this.setState({ ...this.state, movies: newMovies });
 	};
+	handlePage = (page) => {
+		const pageCount = Math.ceil(
+			this.state.movies.length / this.state.pageSize
+		);
+
+		if (page < 1 || page > pageCount) return;
+		this.setState({ ...this.state, currentPage: page });
+	};
 	showMovies() {
 		const { movies } = this.state;
+		const paginateMovies = paginate(
+			movies,
+			this.state.currentPage,
+			this.state.pageSize
+		);
 
 		if (!movies || movies.length <= 0) {
 			return <p>There is no movies in the database</p>;
@@ -45,8 +74,9 @@ class Movies extends Component {
 		return (
 			<>
 				<p>
-					Showing {movies.length}{' '}
-					{movies.length === 1 ? 'movie' : 'movies'} in the database
+					Showing {paginateMovies.length}{' '}
+					{paginateMovies.length === 1 ? 'movie' : 'movies'} in the
+					database
 				</p>
 				<table className='table'>
 					<thead>
@@ -59,7 +89,7 @@ class Movies extends Component {
 						</tr>
 					</thead>
 					<tbody>
-						{movies?.map((movie) => (
+						{paginateMovies?.map((movie) => (
 							<Movie
 								key={movie._id}
 								movie={movie}
@@ -69,6 +99,12 @@ class Movies extends Component {
 						))}
 					</tbody>
 				</table>
+				<Pagination
+					itemsCount={this.state.movies.length}
+					pageSize={this.state.pageSize}
+					currentPage={this.state.currentPage}
+					onPage={this.handlePage}
+				/>
 			</>
 		);
 	}
