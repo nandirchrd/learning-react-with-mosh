@@ -12,7 +12,8 @@ class Movies extends Component {
 		currentPage: 1,
 		pageSize: 4,
 		genres: [],
-		selectedGenre: null,
+		selectedGenre: { _id: '', name: 'All genres' },
+		sortColumn: { path: 'title', order: 'asc' },
 	};
 
 	componentDidUpdate() {
@@ -23,7 +24,7 @@ class Movies extends Component {
 	}
 	componentDidMount() {
 		console.log('COMP - Did mount');
-		const genres = [{ name: 'All genres' }, ...getGenres()];
+		const genres = [{ _id: '', name: 'All genres' }, ...getGenres()];
 		this.setState({
 			...this.state,
 			movies: getMovies(),
@@ -72,14 +73,39 @@ class Movies extends Component {
 	handleGenreSelect = (genre) => {
 		this.setState({ ...this.state, selectedGenre: genre, currentPage: 1 });
 	};
+	handleSort = (path) => {
+		const sortColumn = { ...this.state.sortColumn };
+		if (path === this.state.sortColumn.path) {
+			sortColumn.path = path;
+			sortColumn.order =
+				this.state.sortColumn.order === 'asc' ? 'desc' : 'asc';
+		} else {
+			sortColumn.path = path;
+			sortColumn.order = 'asc';
+		}
+		this.setState({ ...this.state, sortColumn });
+	};
 	showMovies() {
-		const { movies, selectedGenre } = this.state;
+		const { movies, selectedGenre, sortColumn } = this.state;
 		const filtered =
 			selectedGenre && selectedGenre._id
 				? movies.filter(
 						(movie) => movie.genre._id === selectedGenre._id
 				  )
 				: movies;
+		const sorted = filtered.sort((a, b) => {
+			if (sortColumn.order === 'asc') {
+				if (sortColumn.path === 'genre.name') {
+					return a.genre.name > b.genre.name ? 1 : -1;
+				}
+				return a[sortColumn.path] > b[sortColumn.path] ? 1 : -1;
+			}
+			if (sortColumn.path === 'genre.name') {
+				return a.genre.name < b.genre.name ? 1 : -1;
+			}
+			return a[sortColumn.path] < b[sortColumn.path] ? 1 : -1;
+		});
+		console.log(sorted);
 		const paginateMovies = paginate(
 			filtered,
 			this.state.currentPage,
@@ -107,10 +133,32 @@ class Movies extends Component {
 					<table className='table'>
 						<thead>
 							<tr>
-								<th>Title</th>
-								<th>Genre</th>
-								<th>Stock</th>
-								<th>Rate</th>
+								<th
+									onClick={() => this.handleSort('title')}
+									style={{ cursor: 'pointer' }}>
+									Title
+								</th>
+								<th
+									onClick={() =>
+										this.handleSort('genre.name')
+									}
+									style={{ cursor: 'pointer' }}>
+									Genre
+								</th>
+								<th
+									onClick={() =>
+										this.handleSort('numberInStock')
+									}
+									style={{ cursor: 'pointer' }}>
+									Stock
+								</th>
+								<th
+									onClick={() =>
+										this.handleSort('dailyRentalRate')
+									}
+									style={{ cursor: 'pointer' }}>
+									Rate
+								</th>
 								<th colSpan={2}></th>
 							</tr>
 						</thead>
