@@ -16,7 +16,6 @@ class Movies extends Component {
 		selectedGenre: { _id: '', name: 'All genres' },
 		sortColumn: { path: 'title', order: 'asc' },
 	};
-
 	componentDidUpdate() {
 		console.log('COMP - Did update');
 	}
@@ -83,23 +82,31 @@ class Movies extends Component {
 	handleSort = (sortColumn) => {
 		this.setState({ ...this.state, sortColumn });
 	};
-
-	render() {
-		console.log('COMP - Rendered');
-
+	getPageMovies = () => {
 		const { movies: allMovies, selectedGenre, sortColumn } = this.state;
+		// FILTERED MOVIES BY GENRE
 		const filtered =
 			selectedGenre && selectedGenre._id
 				? allMovies.filter(
 						(movie) => movie.genre._id === selectedGenre._id
 				  )
 				: allMovies;
+		// SORTED MOVIES
 		const sorted = sorting(filtered, sortColumn);
+		// PAGINATE THE MOVIES
 		const movies = paginate(
 			sorted,
 			this.state.currentPage,
 			this.state.pageSize
 		);
+		return { data: movies, totalCount: filtered.length };
+	};
+
+	render() {
+		console.log('COMP - Rendered');
+		const { movies: allMovies, sortColumn } = this.state;
+
+		const { data: movies, totalCount } = this.getPageMovies();
 
 		if (!allMovies || allMovies.length <= 0)
 			return <p>There is no movies in the database</p>;
@@ -115,9 +122,8 @@ class Movies extends Component {
 				</div>
 				<div className='col'>
 					<p>
-						Showing {filtered.length}{' '}
-						{filtered.length <= 1 ? 'movie' : 'movies'} in the
-						database
+						Showing {totalCount}{' '}
+						{totalCount <= 1 ? 'movie' : 'movies'} in the database
 					</p>
 					<MoviesTable
 						movies={movies}
@@ -127,7 +133,7 @@ class Movies extends Component {
 						sortColumn={sortColumn}
 					/>
 					<Pagination
-						itemsCount={filtered.length}
+						itemsCount={totalCount}
 						pageSize={this.state.pageSize}
 						currentPage={this.state.currentPage}
 						onPageChange={this.handlePageChange}
