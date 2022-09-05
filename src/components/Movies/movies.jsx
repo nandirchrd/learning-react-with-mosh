@@ -80,16 +80,7 @@ class Movies extends Component {
 			currentPage: 1,
 		});
 	};
-	handleSort = (path) => {
-		const sortColumn = { ...this.state.sortColumn };
-		if (path === this.state.sortColumn.path) {
-			sortColumn.path = path;
-			sortColumn.order =
-				this.state.sortColumn.order === 'asc' ? 'desc' : 'asc';
-		} else {
-			sortColumn.path = path;
-			sortColumn.order = 'asc';
-		}
+	handleSort = (sortColumn) => {
 		this.setState({ ...this.state, sortColumn });
 	};
 
