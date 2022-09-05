@@ -4,23 +4,23 @@ import propTypes from 'prop-types';
 
 class Pagination extends Component {
 	render() {
-		const { itemsCount, pageSize, currentPage, onPage } = this.props;
+		const { itemsCount, pageSize, currentPage, onPageChange } = this.props;
 		const pageCount = Math.ceil(itemsCount / pageSize);
 		const pages = range(pageCount);
-		if (pageCount === 1) return null;
+		if (pageCount <= 1) return null;
 		return (
 			<nav>
 				<ul className='pagination'>
 					<li
 						className='page-item'
 						style={{ cursor: 'pointer' }}
-						onClick={() => onPage(currentPage - 1)}>
+						onClick={() => onPageChange(currentPage - 1)}>
 						<span className='page-link'>&laquo;</span>
 					</li>
 					{pages.map((page) => (
 						<li
 							key={page}
-							onClick={() => onPage(page)}
+							onClick={() => onPageChange(page)}
 							className={
 								currentPage === page
 									? 'page-item active'
@@ -33,7 +33,7 @@ class Pagination extends Component {
 					<li
 						className='page-item'
 						style={{ cursor: 'pointer' }}
-						onClick={() => onPage(currentPage + 1)}>
+						onClick={() => onPageChange(currentPage + 1)}>
 						<span className='page-link'>&raquo;</span>
 					</li>
 				</ul>
@@ -41,12 +41,11 @@ class Pagination extends Component {
 		);
 	}
 }
-
 Pagination.propTypes = {
 	itemsCount: propTypes.number.isRequired,
 	pageSize: propTypes.number.isRequired,
 	currentPage: propTypes.number.isRequired,
-	onPage: propTypes.func.isRequired,
+	onPageChange: propTypes.func.isRequired,
 };
 
 export default Pagination;

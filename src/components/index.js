@@ -1,2 +1,2 @@
 export { default as Movies } from './Movies/movies';
-export { default as Movie } from './Movie/movie';
+export { default as MoviesTable } from './MoviesTable/moviesTable';
