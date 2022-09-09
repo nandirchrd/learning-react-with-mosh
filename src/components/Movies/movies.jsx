@@ -112,15 +112,15 @@ class Movies extends Component {
 			return <p>There is no movies in the database</p>;
 
 		return (
-			<div className='d-flex flex-column flex-lg-row justify-content-lg-around'>
-				<div className=''>
+			<div className='row'>
+				<div className='col col-lg-3'>
 					<ListGroup
 						items={this.state.genres}
 						onItemSelect={this.handleGenreSelect}
 						selectedItem={this.state.selectedGenre}
 					/>
 				</div>
-				<div className=''>
+				<div className='col'>
 					<p>
 						Showing {totalCount}{' '}
 						{totalCount <= 1 ? 'movie' : 'movies'} in the database
