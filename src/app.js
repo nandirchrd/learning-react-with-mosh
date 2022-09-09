@@ -7,6 +7,7 @@ import RentalsPage from './pages/rentalsPage';
 import NotFound from './pages/notFound';
 import FormMoviePage from './pages/formMoviePage';
 import LoginPage from './pages/loginPage';
+import RegisterPage from './pages/registerPage';
 
 class App extends Component {
 	render() {
@@ -16,6 +17,7 @@ class App extends Component {
 				<main className='container'>
 					<Switch>
 						<Route path='/login' component={LoginPage} />
+						<Route path='/register' component={RegisterPage} />
 						<Route path='/movies/:id' component={FormMoviePage} />
 						<Route path='/movies' component={MoviesPage} />
 						<Route path='/customers' component={CustomersPage} />
