@@ -12,7 +12,7 @@ class Input extends Component {
 		} = this.props;
 		return (
 			<div className='form-group'>
-				<label htmlFor='username'>{label}</label>
+				<label htmlFor={name}>{label}</label>
 				<input
 					onChange={onChange}
 					value={value}

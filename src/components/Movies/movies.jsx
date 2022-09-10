@@ -6,6 +6,7 @@ import paginate from '../../utils/paginate';
 import ListGroup from '../common/listGroup';
 import { getGenres } from '../../services/fakeGenreService';
 import { sorting } from '../../utils/sorting';
+import { Link } from 'react-router-dom';
 
 class Movies extends Component {
 	state = {
@@ -125,6 +126,9 @@ class Movies extends Component {
 						Showing {totalCount}{' '}
 						{totalCount <= 1 ? 'movie' : 'movies'} in the database
 					</p>
+					<Link className='btn btn-primary' to='movies/new'>
+						Add movie
+					</Link>
 					<MoviesTable
 						movies={movies}
 						onLike={this.handleLikedMovie}

@@ -9,6 +9,7 @@ class Form extends Component {
 		const { error } = Joi.validate(this.state.data, this.schema, options);
 		if (!error) return null;
 		const errors = {};
+		console.log(error);
 		for (let i = error.details.length - 1; i >= 0; --i) {
 			errors[error.details[i].path[0]] = error.details[i].message;
 		}
@@ -51,7 +52,36 @@ class Form extends Component {
 			/>
 		);
 	}
-
+	renderSelect(name, label, items) {
+		return (
+			<div className='form-group'>
+				<label htmlFor={name}>{label}</label>
+				<select
+					id={name}
+					name={name}
+					value={this.state.data[name]}
+					onChange={this.handleChange}
+					className='form-select'>
+					<option className='select-item' disabled>
+						{''}
+					</option>
+					{items.map((item) => (
+						<option
+							key={item._id}
+							className='select-item'
+							value={item._id}>
+							{item.name}
+						</option>
+					))}
+				</select>
+				{this.state.errors[name] && (
+					<div className='alert alert-danger'>
+						{this.state.errors[name]}
+					</div>
+				)}
+			</div>
+		);
+	}
 	renderButton(label) {
 		return (
 			<button

@@ -5,9 +5,9 @@ import { Navbar } from './components';
 import CustomersPage from './pages/customersPage';
 import RentalsPage from './pages/rentalsPage';
 import NotFound from './pages/notFound';
-import FormMoviePage from './pages/formMoviePage';
 import LoginPage from './pages/loginPage';
 import RegisterPage from './pages/registerPage';
+import FormMoviePage from './pages/formMoviePage';
 
 class App extends Component {
 	render() {
