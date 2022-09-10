@@ -6,6 +6,8 @@ import paginate from '../../utils/paginate';
 import ListGroup from '../common/listGroup';
 import { getGenres } from '../../services/fakeGenreService';
 import { sorting } from '../../utils/sorting';
+import { Link } from 'react-router-dom';
+import SearchBox from '../common/searchBox';
 
 class Movies extends Component {
 	state = {
@@ -13,6 +15,7 @@ class Movies extends Component {
 		currentPage: 1,
 		pageSize: 4,
 		genres: [],
+		query: '',
 		selectedGenre: { _id: '', name: 'All genres' },
 		sortColumn: { path: 'title', order: 'asc' },
 	};
@@ -77,20 +80,37 @@ class Movies extends Component {
 			sortColumn: { path: 'title', order: 'asc' },
 			selectedGenre: genre,
 			currentPage: 1,
+			query: '',
 		});
 	};
 	handleSort = (sortColumn) => {
 		this.setState({ ...this.state, sortColumn });
 	};
+	handleSearch = (query) =>
+		this.setState({
+			query,
+			selectedGenre: { _id: '', name: 'All Genres' },
+			currentPage: 1,
+		});
 	getPageMovies = () => {
-		const { movies: allMovies, selectedGenre, sortColumn } = this.state;
-		// FILTERED MOVIES BY GENRE
-		const filtered =
-			selectedGenre && selectedGenre._id
-				? allMovies.filter(
-						(movie) => movie.genre._id === selectedGenre._id
-				  )
-				: allMovies;
+		const {
+			movies: allMovies,
+			selectedGenre,
+			sortColumn,
+			query,
+		} = this.state;
+		// FILTERED MOVIES BY GENRE OR SEARCH BY QUERY
+		let filtered = allMovies;
+		if (query) {
+			filtered = allMovies.filter((movie) =>
+				movie.title.toLowerCase().startsWith(query)
+			);
+		} else if (selectedGenre && selectedGenre._id) {
+			filtered = allMovies.filter(
+				(movie) => movie.genre._id === selectedGenre._id
+			);
+		}
+
 		// SORTED MOVIES
 		const sorted = sorting(filtered, sortColumn);
 		// PAGINATE THE MOVIES
@@ -113,7 +133,7 @@ class Movies extends Component {
 
 		return (
 			<div className='row'>
-				<div className='col-3'>
+				<div className='col col-lg-3'>
 					<ListGroup
 						items={this.state.genres}
 						onItemSelect={this.handleGenreSelect}
@@ -125,6 +145,14 @@ class Movies extends Component {
 						Showing {totalCount}{' '}
 						{totalCount <= 1 ? 'movie' : 'movies'} in the database
 					</p>
+					<Link className='btn btn-primary' to='movies/new'>
+						Add movie
+					</Link>
+					<SearchBox
+						name='query'
+						value={this.state.query}
+						onChange={this.handleSearch}
+					/>
 					<MoviesTable
 						movies={movies}
 						onLike={this.handleLikedMovie}
