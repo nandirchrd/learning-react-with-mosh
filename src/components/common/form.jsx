@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Joi from 'joi-browser';
 import Input from './input';
+import Select from './select';
 
 class Form extends Component {
 	state = { data: {}, errors: {} };
@@ -22,6 +23,7 @@ class Form extends Component {
 		return error ? error.details[0].message : null;
 	}
 	handleChange = ({ currentTarget: input }) => {
+		console.log(input);
 		const errors = { ...this.state.errors };
 		const error = this.validateProperty(input);
 		if (error) errors[input.name] = error;
@@ -54,32 +56,14 @@ class Form extends Component {
 	}
 	renderSelect(name, label, items) {
 		return (
-			<div className='form-group'>
-				<label htmlFor={name}>{label}</label>
-				<select
-					id={name}
-					name={name}
-					value={this.state.data[name]}
-					onChange={this.handleChange}
-					className='form-select'>
-					<option className='select-item' disabled>
-						{''}
-					</option>
-					{items.map((item) => (
-						<option
-							key={item._id}
-							className='select-item'
-							value={item._id}>
-							{item.name}
-						</option>
-					))}
-				</select>
-				{this.state.errors[name] && (
-					<div className='alert alert-danger'>
-						{this.state.errors[name]}
-					</div>
-				)}
-			</div>
+			<Select
+				name={name}
+				label={label}
+				items={items}
+				value={this.state.data[name]}
+				error={this.state.errors[name]}
+				onChange={this.handleChange}
+			/>
 		);
 	}
 	renderButton(label) {
