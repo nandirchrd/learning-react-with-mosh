@@ -8,11 +8,13 @@ import NotFound from './pages/notFound';
 import LoginPage from './pages/loginPage';
 import RegisterPage from './pages/registerPage';
 import FormMoviePage from './pages/formMoviePage';
+import { ToastContainer } from 'react-toastify';
 
 class App extends Component {
 	render() {
 		return (
 			<>
+				<ToastContainer />
 				<Navbar />
 				<main className='container'>
 					<Switch>
