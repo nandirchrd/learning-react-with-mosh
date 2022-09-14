@@ -1,7 +1,8 @@
 import Joi from 'joi-browser';
 import React from 'react';
-import { getGenres } from '../../services/fakeGenreService';
-import { getMovie, saveMovie } from '../../services/fakeMovieService';
+import { toast } from 'react-toastify';
+import { getGenres } from '../../services/genreService';
+import { getMovie, saveMovie } from '../../services/movieService';
 import Form from '../common/form';
 
 class MovieForm extends Form {
@@ -16,15 +17,17 @@ class MovieForm extends Form {
 		genres: [],
 		errors: {},
 	};
-	componentDidMount = () => {
-		const genres = getGenres();
+	componentDidMount = async () => {
+		const { data: genres } = await getGenres();
 		this.setState({ genres });
 		const { id: movieId } = this.props.match.params;
 		if (movieId === 'new') return;
-		const movie = getMovie(movieId);
-		console.log(movie);
-		if (!movie) return this.props.history.replace('/not-found');
-		this.setState({ data: this.mapToViewModel(movie) });
+		try {
+			const { data: movie } = await getMovie(movieId);
+			this.setState({ data: this.mapToViewModel(movie) });
+		} catch (err) {
+			this.props.history.replace('/not-found');
+		}
 	};
 	schema = {
 		_id: Joi.string(),
@@ -43,13 +46,21 @@ class MovieForm extends Form {
 		};
 	}
 
-	doSubmit() {
+	async doSubmit() {
 		// Calling the backend
-		const { query } = saveMovie(this.state.data);
-		query === 'update'
-			? alert('Updated the movie succesfully')
-			: alert('Added new movie succesfully');
-		this.props.history.replace('/movies');
+
+		try {
+			await saveMovie(this.state.data);
+			if (this.state.data._id.trim() !== '') {
+				toast('Update success!');
+			} else {
+				toast.success('Added success!');
+			}
+
+			this.props.history.replace('/movies');
+		} catch (err) {
+			toast.error(err.response.data);
+		}
 	}
 	render() {
 		const { id } = this.props.match.params;

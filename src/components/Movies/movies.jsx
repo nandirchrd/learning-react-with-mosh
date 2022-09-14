@@ -1,13 +1,14 @@
 import { Component } from 'react';
-import { getMovies } from '../../services/fakeMovieService';
 import { MoviesTable } from '../';
 import Pagination from '../common/pagination';
 import paginate from '../../utils/paginate';
 import ListGroup from '../common/listGroup';
-import { getGenres } from '../../services/fakeGenreService';
 import { sorting } from '../../utils/sorting';
 import { Link } from 'react-router-dom';
 import SearchBox from '../common/searchBox';
+import { getGenres } from '../../services/genreService';
+import { getMovies, deleteMovie } from '../../services/movieService';
+import { toast } from 'react-toastify';
 
 class Movies extends Component {
 	state = {
@@ -25,26 +26,24 @@ class Movies extends Component {
 	componentWillUnmount() {
 		console.log('COMP - WILL UNMOUNT?');
 	}
-	componentDidMount() {
+	async componentDidMount() {
 		console.log('COMP - Did mount');
-		const genres = [{ _id: '', name: 'All genres' }, ...getGenres()];
-		this.setState({
-			...this.state,
-			movies: getMovies(),
-			genres,
-		});
+		const { data } = await getGenres();
+		const genres = [{ _id: '', name: 'All genres' }, ...data];
+
+		const { data: movies } = await getMovies();
+		this.setState({ movies, genres });
 	}
 	shouldComponentUpdate() {
 		console.log('COMP - Should Update?');
 		return true;
 	}
-	handleDeleteMovie = (targetMovie) => {
+	handleDeleteMovie = async (targetMovie) => {
 		if (!window.confirm('Are u sure?')) return false;
-		const deletedMovie = this.state.movies.filter(
-			(movie) => movie !== targetMovie
-		);
+		const originalMovies = [...this.state.movies];
+		const movies = originalMovies.filter((movie) => movie !== targetMovie);
 
-		this.setState({ ...this.state, movies: deletedMovie }, () => {
+		this.setState({ movies }, () => {
 			const pageCount = Math.ceil(
 				this.state.movies.length / this.state.pageSize
 			);
@@ -55,10 +54,17 @@ class Movies extends Component {
 				});
 			}
 		});
-
-		alert(`"${targetMovie.title}" has deleted`);
+		try {
+			await deleteMovie(targetMovie);
+			toast.error(`"${targetMovie.title}" has deleted`);
+		} catch (err) {
+			toast.error('ERROR');
+			console.log(err);
+			if (err.response && err.response.status === 404)
+				this.setState({ movies: originalMovies });
+		}
 	};
-	handleLikedMovie = (targetMovie) => {
+	handleLikedMovie = async (targetMovie) => {
 		const newMovies = [...this.state.movies];
 		const index = this.state.movies.findIndex(
 			(movie) => movie === targetMovie
