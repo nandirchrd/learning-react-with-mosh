@@ -28,16 +28,42 @@ class Navbar extends Component {
 									Rentals
 								</NavLink>
 							</li>
-							<li className='nav-item'>
-								<NavLink className='nav-link' to='/login'>
-									Login
-								</NavLink>
-							</li>
-							<li className='nav-item'>
-								<NavLink className='nav-link' to='/register'>
-									Register
-								</NavLink>
-							</li>
+							{!this.props.user && (
+								<>
+									<li className='nav-item'>
+										<NavLink
+											className='nav-link'
+											to='/login'>
+											Login
+										</NavLink>
+									</li>
+									<li className='nav-item'>
+										<NavLink
+											className='nav-link'
+											to='/register'>
+											Register
+										</NavLink>
+									</li>
+								</>
+							)}
+							{this.props.user && (
+								<>
+									<li className='nav-item'>
+										<NavLink
+											className='nav-link'
+											to='/profile'>
+											{this.props.user.name}
+										</NavLink>
+									</li>
+									<li className='nav-item'>
+										<NavLink
+											className='nav-link'
+											to='/logout'>
+											Logout
+										</NavLink>
+									</li>
+								</>
+							)}
 						</ul>
 					</div>
 				</div>

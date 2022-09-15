@@ -1,17 +1,32 @@
 import React from 'react';
 import Form from '../common/form';
 import Joi from 'joi-browser';
+import auth from '../../services/authService';
+import { toast } from 'react-toastify';
 
 class LoginForm extends Form {
 	state = { data: { username: '', password: '' }, errors: {} };
 	schema = {
-		username: Joi.string().required().min(6),
+		username: Joi.string().email().required().min(6),
 		password: Joi.string().min(5).required(),
 	};
 
-	doSubmit() {
+	async doSubmit() {
 		// Call the backend
-		console.log('SUBMITTED');
+		try {
+			const { username, password } = this.state.data;
+			await auth.login(username, password);
+			toast.success('LOGIN SUCCESS!');
+			window.location = '/movies';
+		} catch (err) {
+			if (err.response && err.response.status === 400) {
+				toast.error('LOGIN FAILED!');
+				const errors = { ...this.state.errors };
+				errors.username = err.response.data;
+
+				this.setState({ errors });
+			}
+		}
 	}
 
 	render() {

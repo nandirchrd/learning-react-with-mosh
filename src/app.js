@@ -9,16 +9,26 @@ import LoginPage from './pages/loginPage';
 import RegisterPage from './pages/registerPage';
 import FormMoviePage from './pages/formMoviePage';
 import { ToastContainer } from 'react-toastify';
-
+import LogoutPage from './pages/logoutPage';
+import auth from './services/authService';
 class App extends Component {
+	state = {};
+
+	componentDidMount() {
+		try {
+			const user = auth.getCurrentUser();
+			this.setState({ user });
+		} catch (err) {}
+	}
 	render() {
 		return (
 			<>
 				<ToastContainer />
-				<Navbar />
+				<Navbar user={this.state.user} />
 				<main className='container'>
 					<Switch>
 						<Route path='/login' component={LoginPage} />
+						<Route path='/logout' component={LogoutPage} />
 						<Route path='/register' component={RegisterPage} />
 						<Route path='/movies/:id' component={FormMoviePage} />
 						<Route path='/movies' component={MoviesPage} />
