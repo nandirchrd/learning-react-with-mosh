@@ -17,7 +17,8 @@ class LoginForm extends Form {
 			const { username, password } = this.state.data;
 			await auth.login(username, password);
 			toast.success('LOGIN SUCCESS!');
-			window.location = '/movies';
+			const { state } = this.props.location;
+			window.location = state ? state.from : '/movies';
 		} catch (err) {
 			if (err.response && err.response.status === 400) {
 				toast.error('LOGIN FAILED!');

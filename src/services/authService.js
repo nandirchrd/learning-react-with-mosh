@@ -16,10 +16,12 @@ const logout = () => {
 	localStorage.removeItem('token');
 };
 const getCurrentUser = () => {
-	const getToken = localStorage.getItem('token');
-	console.log(jwtDecode(getToken));
-	if (getToken) return jwtDecode(getToken);
-	return null;
+	try {
+		const getToken = localStorage.getItem('token');
+		return jwtDecode(getToken);
+	} catch (err) {
+		return null;
+	}
 };
 const loginWithJwt = (jwt) => {
 	localStorage.setItem('token', jwt);

@@ -11,6 +11,7 @@ import FormMoviePage from './pages/formMoviePage';
 import { ToastContainer } from 'react-toastify';
 import LogoutPage from './pages/logoutPage';
 import auth from './services/authService';
+import ProtectedRoute from './components/common/protectedRoute';
 class App extends Component {
 	state = {};
 
@@ -33,15 +34,9 @@ class App extends Component {
 						<Route path='/login' component={LoginPage} />
 						<Route path='/logout' component={LogoutPage} />
 						<Route path='/register' component={RegisterPage} />
-						<Route
+						<ProtectedRoute
 							path='/movies/:id'
-							render={(props) =>
-								!this.state.user ? (
-									<Redirect to='/login' />
-								) : (
-									<FormMoviePage {...props} />
-								)
-							}
+							component={FormMoviePage}
 						/>
 						<Route
 							path='/movies'
