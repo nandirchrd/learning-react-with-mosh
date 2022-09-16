@@ -17,12 +17,17 @@ const logout = () => {
 };
 const getCurrentUser = () => {
 	const getToken = localStorage.getItem('token');
+	console.log(jwtDecode(getToken));
 	if (getToken) return jwtDecode(getToken);
 	return null;
 };
 const loginWithJwt = (jwt) => {
 	localStorage.setItem('token', jwt);
 };
+const getJWT = () => {
+	return localStorage.getItem('token');
+};
+http.setJWT(getJWT());
 
-const auth = { login, loginWithJwt, logout, getCurrentUser };
+const auth = { login, loginWithJwt, logout, getCurrentUser, getJWT };
 export default auth;

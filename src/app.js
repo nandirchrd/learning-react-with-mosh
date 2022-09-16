@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import MoviesPage from './pages/moviesPage';
 import { Navbar } from './components';
 import CustomersPage from './pages/customersPage';
@@ -17,8 +17,11 @@ class App extends Component {
 	componentDidMount() {
 		try {
 			const user = auth.getCurrentUser();
+
 			this.setState({ user });
-		} catch (err) {}
+		} catch (err) {
+			console.log(err);
+		}
 	}
 	render() {
 		return (
@@ -30,8 +33,22 @@ class App extends Component {
 						<Route path='/login' component={LoginPage} />
 						<Route path='/logout' component={LogoutPage} />
 						<Route path='/register' component={RegisterPage} />
-						<Route path='/movies/:id' component={FormMoviePage} />
-						<Route path='/movies' component={MoviesPage} />
+						<Route
+							path='/movies/:id'
+							render={(props) =>
+								!this.state.user ? (
+									<Redirect to='/login' />
+								) : (
+									<FormMoviePage {...props} />
+								)
+							}
+						/>
+						<Route
+							path='/movies'
+							render={(props) => (
+								<MoviesPage user={this.state.user} {...props} />
+							)}
+						/>
 						<Route path='/customers' component={CustomersPage} />
 						<Route path='/rentals' component={RentalsPage} />
 						<NotFound />
