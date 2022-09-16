@@ -4,7 +4,7 @@ import { LoginForm } from '../components';
 class LoginPage extends Component {
 	state = {};
 	render() {
-		return <LoginForm />;
+		return <LoginForm {...this.props} />;
 	}
 }
 

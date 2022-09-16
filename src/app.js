@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import MoviesPage from './pages/moviesPage';
 import { Navbar } from './components';
 import CustomersPage from './pages/customersPage';
@@ -9,19 +9,41 @@ import LoginPage from './pages/loginPage';
 import RegisterPage from './pages/registerPage';
 import FormMoviePage from './pages/formMoviePage';
 import { ToastContainer } from 'react-toastify';
-
+import LogoutPage from './pages/logoutPage';
+import auth from './services/authService';
+import ProtectedRoute from './components/common/protectedRoute';
 class App extends Component {
+	state = {};
+
+	componentDidMount() {
+		try {
+			const user = auth.getCurrentUser();
+
+			this.setState({ user });
+		} catch (err) {
+			console.log(err);
+		}
+	}
 	render() {
 		return (
 			<>
 				<ToastContainer />
-				<Navbar />
+				<Navbar user={this.state.user} />
 				<main className='container'>
 					<Switch>
 						<Route path='/login' component={LoginPage} />
+						<Route path='/logout' component={LogoutPage} />
 						<Route path='/register' component={RegisterPage} />
-						<Route path='/movies/:id' component={FormMoviePage} />
-						<Route path='/movies' component={MoviesPage} />
+						<ProtectedRoute
+							path='/movies/:id'
+							component={FormMoviePage}
+						/>
+						<Route
+							path='/movies'
+							render={(props) => (
+								<MoviesPage user={this.state.user} {...props} />
+							)}
+						/>
 						<Route path='/customers' component={CustomersPage} />
 						<Route path='/rentals' component={RentalsPage} />
 						<NotFound />

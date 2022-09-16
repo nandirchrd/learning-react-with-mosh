@@ -33,6 +33,7 @@ class Movies extends Component {
 
 		const { data: movies } = await getMovies();
 		this.setState({ movies, genres });
+		console.log(this.props);
 	}
 	shouldComponentUpdate() {
 		console.log('COMP - Should Update?');
@@ -59,9 +60,7 @@ class Movies extends Component {
 			toast.error(`"${targetMovie.title}" has deleted`);
 		} catch (err) {
 			toast.error('ERROR');
-			console.log(err);
-			if (err.response && err.response.status === 404)
-				this.setState({ movies: originalMovies });
+			this.setState({ movies: originalMovies });
 		}
 	};
 	handleLikedMovie = async (targetMovie) => {
@@ -151,9 +150,11 @@ class Movies extends Component {
 						Showing {totalCount}{' '}
 						{totalCount <= 1 ? 'movie' : 'movies'} in the database
 					</p>
-					<Link className='btn btn-primary' to='movies/new'>
-						Add movie
-					</Link>
+					{this.props.user && (
+						<Link className='btn btn-primary' to='movies/new'>
+							Add movie
+						</Link>
+					)}
 					<SearchBox
 						name='query'
 						value={this.state.query}
