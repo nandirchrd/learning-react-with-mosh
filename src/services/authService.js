@@ -1,8 +1,7 @@
 import http from './httpService';
-import config from '../config/config.json';
 import jwtDecode from 'jwt-decode';
 
-const endPointapi = config.apiUrl + '/auth';
+const endPointapi = '/auth';
 
 const login = async (username, password) => {
 	const { data: jwt } = await http.post(endPointapi, {
