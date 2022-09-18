@@ -31,22 +31,32 @@ class App extends Component {
 				<Navbar user={this.state.user} />
 				<main className='container'>
 					<Switch>
-						<Route path='/login' component={LoginPage} />
-						<Route path='/logout' component={LogoutPage} />
-						<Route path='/register' component={RegisterPage} />
+						<Route exact path='/login' component={LoginPage} />
+						<Route exact path='/logout' component={LogoutPage} />
+						<Route
+							exact
+							path='/register'
+							component={RegisterPage}
+						/>
 						<ProtectedRoute
+							exact
 							path='/movies/:id'
 							component={FormMoviePage}
 						/>
 						<Route
+							exact
 							path='/movies'
 							render={(props) => (
 								<MoviesPage user={this.state.user} {...props} />
 							)}
 						/>
-						<Route path='/customers' component={CustomersPage} />
-						<Route path='/rentals' component={RentalsPage} />
-						<NotFound />
+						<Route
+							exact
+							path='/customers'
+							component={CustomersPage}
+						/>
+						<Route exact path='/rentals' component={RentalsPage} />
+						<Route path='*' component={NotFound} />
 					</Switch>
 				</main>
 			</>
